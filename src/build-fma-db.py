@@ -99,7 +99,6 @@ def writedb(dbfile, headers, rows):
          aal integer)''')
     cur.execute('''create table if not exists synonyms
         (id integer NOT NULL,
-        name text,
         synonym text,
         synonym_type text,
         lang text,
@@ -130,7 +129,7 @@ def writedb(dbfile, headers, rows):
     for r in rows:
         fmaid = int(r[0])
 
-        syntable = [(fmaid, r[0].strip(), u'preferred_label', 'en')]
+        syntable = [(fmaid, r[1].strip(), u'preferred_label', 'en')]
         synonyms = r[2].decode('latin-1')
         defs = r[3].decode('latin-1')
         nee = r[11].decode('latin-1')
@@ -142,7 +141,7 @@ def writedb(dbfile, headers, rows):
                          synonyms.split(u'|')]
 
         if nee:
-            syntable += [(fmaid, r[0], n.strip(), u'non_english_equivalent') for n in
+            syntable += [(fmaid, n.strip(), u'non_english_equivalent', None) for n in
                          nee.split(u'|')]
 
         cur.executemany(u'''insert or ignore into synonyms
