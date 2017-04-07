@@ -169,8 +169,6 @@ def writedb(dbfile, headers, rows):
     cur.close()
     db.commit()
 
-
-
 if __name__ == '__main__':
     headers, rows = extractData(sys.argv[1])
     writedb(sys.argv[2], headers, rows)
