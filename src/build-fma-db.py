@@ -1,6 +1,6 @@
 import sys
 import csv
-import apsw as sqlite3
+import sqlite3
 
 
 def countEls(x, y):
@@ -20,18 +20,18 @@ def transformElement(h, v):
     return v
 
 HeaderMapping = {
-    'Class ID': None,
-    'Preferred Label': 'preferred_label',  # 0
-    'Synonyms': 'synonyms',  # 1
-    'Definitions': 'definitions',  # 2
+    'Class ID': 'id',  # 0
+    'Preferred Label': 'preferred_label',  # 1
+    'Synonyms': 'synonyms',  # 2
+    'Definitions': 'definitions',  # 3
     'Obsolete': None,
-    'Parents': 'parent_id',  # 3
-    'AAL': 'aal',  # 4
-    'CMA label': 'cma_label',  # 5
+    'Parents': 'parent_id',  # 4
+    'AAL': 'aal',  # 5
+    'CMA label': 'cma_label',  # 6
     'definition': None,
-    'DK  Freesurfer': 'dk_freesurfer',  # 6
+    'DK  Freesurfer': 'dk_freesurfer',  # 7
     'Eponym': None,
-    'FMAID': 'id',  # 7
+    'FMAID': None,
     'homonym for': None,
     'http://data.bioontology.org/metadata/prefixIRI': None,
     'JHU DTI-81': 'jhu_dti_81',  # 8
@@ -50,7 +50,8 @@ HeaderMapping = {
 
 
 def filterColumns(c):
-    return (c[7], c[0], c[3], c[4], c[5], c[6], c[8], c[9], c[10], c[12], c[13])
+    v = (c[0], c[1], c[4], c[5], c[6], c[8], c[9], c[10], c[12])
+    return v
 
 
 def extractData(csvfile):
@@ -68,6 +69,8 @@ def extractData(csvfile):
         writer = csv.writer(sys.stdout)
         reader.next()
         for row in reader:
+            if not row[0].startswith('http://purl.org/sig/ont/fma/fma'):
+                continue
             outRow = []
             for i, r in enumerate(row):
                 if accum[i] and newHeaders[i] != None:
@@ -78,51 +81,63 @@ def extractData(csvfile):
 
 
 def writedb(dbfile, headers, rows):
-    db = sqlite3.Connection(dbfile)
+    db = sqlite3.connect(dbfile)
     cur = db.cursor()
     cur.execute('''create table if not exists fma
-        (id text NOT NULL PRIMARY KEY,
+        (id integer NOT NULL PRIMARY KEY,
          preferred_label text,
-         parent_id text,
+         parent_id integer,
          aal text,
          cma_label text,
-         dk_freesurfer text,
          jhu_dti_81 text,
          jhu_wmta text,
          neurolex text,
-         radlex_id text,
-         talairach text)''')
+         radlex_id text)''')
     cur.execute('''create table if not exists synonyms
-        (id text,
+        (id integer,
         preferred_label text,
         synonym text,
         synonym_type text,
-        lang text)''')
+        lang text,
+        foreign key(id) references fma(id))''')
     cur.execute('''create table if not exists definitions
-        (id text,
+        (id integer,
         preferred_label text,
         definition text,
         lang text)''')
+    cur.execute("""create table if not exists fma_dk_freesurfer
+        (id integer,
+        dk_freesurfer integer,
+        foreign key(id) references fma(id))""")
+    cur.execute("""create table if not exists fma_talairach
+        (id integer,
+        talairach integer,
+        foreign key(id) references fma(id))""")
 
     # cur.execute('''create virtual table syn_fts
     #            using fts5(preferred_label, synonyms, id unindexed,
     #            prefix=2, prefix=3)''')
 
     cur.executemany(u'''insert or ignore into fma (
-            id, preferred_label, parent_id, aal, cma_label, dk_freesurfer, 
-            jhu_dti_81, jhu_wmta, neurolex, radlex_id, talairach) values
-            (?,?,?,?,?,?,?,?,?,?,?)''', (filterColumns(r) for r in rows))
+            id, preferred_label, parent_id, aal, cma_label,
+            jhu_dti_81, jhu_wmta, neurolex, radlex_id) values
+            (?,?,?,?,?,?,?,?,?)''', (filterColumns(r) for r in rows))
+    db.commit()
 
     for r in rows:
-        fmaid = r[7]
+        fmaid = int(r[0])
 
         syntable = [(fmaid, r[0].strip(), u'preferred_label', 'en')]
-        synonyms = r[1].decode('latin-1')
+        synonyms = r[2].decode('latin-1')
+        defs = r[3].decode('latin-1')
+        nee = r[11].decode('latin-1')
+        dk_freesurfer = r[7].decode('latin-1')
+        talairach = r[13].decode('latin-1')
+
         if synonyms:
             syntable += [(fmaid, s.strip(), u'synonym', None) for s in
                          synonyms.split(u'|')]
 
-        nee = r[11].decode('latin-1')
         if nee:
             syntable += [(fmaid, r[0], n.strip(), u'non_english_equivalent') for n in
                          nee.split(u'|')]
@@ -132,16 +147,28 @@ def writedb(dbfile, headers, rows):
 
         synstring = '%s %s' % (nee.replace(u'|', u' '),
                                synonyms.replace(u'|', ' '))
-        # cur.execute(u'''insert into syn_fts 
+        # cur.execute(u'''insert into syn_fts
         #                   (preferred_label, synonyms, id)
         #                    values (?,?,?)''', (r[0], synstring, fmaid))
 
-        defs = r[2].decode('latin-1')
         if defs:
             defstable = [(fmaid, r[0], d.strip()) for d in defs.split(u'|')]
             cur.executemany(u'''insert or ignore into definitions
                 (id, preferred_label, definition) values (?,?,?)''', defstable)
+
+        if dk_freesurfer:
+            fstable = [(fmaid, int(d.strip()))
+                       for d in dk_freesurfer.split(u'|')]
+            cur.executemany(u'''insert or ignore into fma_dk_freesurfer
+                (id, dk_freesurfer) values (?,?)''', fstable)
+
+        if talairach:
+            ttable = [(fmaid, int(t.strip())) for t in talairach.split(u'|')]
+            cur.executemany(u'''insert or ignore into fma_talairach
+                (id, talairach) values (?,?)''', ttable)
     cur.close()
+    db.commit()
+
 
 
 if __name__ == '__main__':
