@@ -49,8 +49,17 @@ HeaderMapping = {
 }
 
 
+def intMaybe(i):
+    if not i:
+        return None
+    try:
+        inti = int(i)
+    except ValueError:
+        return None
+    return inti
+
 def filterColumns(c):
-    v = (c[0], c[1], c[4], c[5], c[6], c[8], c[9], c[10], c[12])
+    v = (int(c[0]), c[1], intMaybe(c[4]), intMaybe(c[5]))
     return v
 
 
@@ -85,33 +94,28 @@ def writedb(dbfile, headers, rows):
     cur = db.cursor()
     cur.execute('''create table if not exists fma
         (id integer NOT NULL PRIMARY KEY,
-         preferred_label text,
+         name text,
          parent_id integer,
-         aal text,
-         cma_label text,
-         jhu_dti_81 text,
-         jhu_wmta text,
-         neurolex text,
-         radlex_id text)''')
+         aal integer)''')
     cur.execute('''create table if not exists synonyms
-        (id integer,
-        preferred_label text,
+        (id integer NOT NULL,
+        name text,
         synonym text,
         synonym_type text,
         lang text,
         foreign key(id) references fma(id))''')
     cur.execute('''create table if not exists definitions
-        (id integer,
-        preferred_label text,
+        (id integer NOT NULL,
+        name text,
         definition text,
         lang text)''')
     cur.execute("""create table if not exists fma_dk_freesurfer
-        (id integer,
-        dk_freesurfer integer,
+        (id integer NOT NULL,
+        dk_freesurfer integer NOT NULL,
         foreign key(id) references fma(id))""")
     cur.execute("""create table if not exists fma_talairach
-        (id integer,
-        talairach integer,
+        (id integer NOT NULL,
+        talairach integer NOT NULL,
         foreign key(id) references fma(id))""")
 
     # cur.execute('''create virtual table syn_fts
@@ -119,9 +123,8 @@ def writedb(dbfile, headers, rows):
     #            prefix=2, prefix=3)''')
 
     cur.executemany(u'''insert or ignore into fma (
-            id, preferred_label, parent_id, aal, cma_label,
-            jhu_dti_81, jhu_wmta, neurolex, radlex_id) values
-            (?,?,?,?,?,?,?,?,?)''', (filterColumns(r) for r in rows))
+            id, name, parent_id, aal) values
+            (?,?,?,?)''', (filterColumns(r) for r in rows))
     db.commit()
 
     for r in rows:
@@ -154,7 +157,7 @@ def writedb(dbfile, headers, rows):
         if defs:
             defstable = [(fmaid, r[0], d.strip()) for d in defs.split(u'|')]
             cur.executemany(u'''insert or ignore into definitions
-                (id, preferred_label, definition) values (?,?,?)''', defstable)
+                (id, name, definition) values (?,?,?)''', defstable)
 
         if dk_freesurfer:
             fstable = [(fmaid, int(d.strip()))
