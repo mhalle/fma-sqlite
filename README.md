@@ -34,7 +34,6 @@ CREATE TABLE fma
          aal integer);
 CREATE TABLE synonyms
         (id integer NOT NULL,
-        name text,
         synonym text,
         synonym_type text,  -- what column the name came from
         lang text,          -- if known
