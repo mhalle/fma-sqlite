@@ -1,0 +1,225 @@
+Class ID
+Preferred Label
+Synonyms
+Definitions
+Obsolete
+CUI
+Semantic Types
+Parents
+AAL
+AAL ID
+abbreviation
+action type
+adheres to
+adjacent
+adjacent to
+afferent to
+anatomical coordinate
+anatomical coordinate
+anatomical landmark for
+anatomical plane
+anterior to
+anteroinferior to
+anterolateral to
+anteromedial to
+anterosuperior to
+AP position
+arterial supply
+arterial supply of
+articulates with
+attaches to
+attributed constitutional part
+attributed development
+attributed part
+attributed regional part
+author
+authority
+bounded by
+bounds
+branch
+branch  continuity
+branch of
+cell appendage type
+CMA label
+connected to
+connecting part
+connection type
+constitutional part
+constitutional part of
+contained in
+contains
+continuous distally with
+continuous proximally with
+continuous with
+contributing author
+corresponds to
+creator
+date entered modified
+days post-fertilization
+definition
+derives
+derives from
+development type
+developmental fusion
+developmental stage of
+develops from
+develops into
+dimension
+direct left of
+direct right of
+distal to
+DK  Freesurfer
+drains into
+efferent to
+English equivalent
+Eponym
+external to
+FMAID
+forms
+Freesurfer ID
+full grown phenotype
+fuses with
+fusion of
+germ origin
+gestation age  weeks
+has anatomical landmark
+has boundary
+has developmental stage
+has dimension
+has direct cell layer
+has direct cell shape
+has direct number of pairs per nucleus
+has direct ploidy
+has direct shape type
+has direct shape type
+has inherent 3-D shape
+has insertion
+has location
+has mass
+has origin
+has projection
+homonym for
+homonym of
+http://data.bioontology.org/metadata/prefixIRI
+http://purl.org/dc/elements/1.1/contributor
+http://purl.org/dc/elements/1.1/description
+inferior to
+inferolateral to
+inferomedial to
+inherent 3-D shape
+input from
+insertion of
+is boundary of
+JHU DTI-81
+JHU White-Matter Tractography Atlas
+language
+lateral to
+laterality
+laterality
+Latin name  TA
+left lateral to
+left medial to
+located in
+location of
+lymphatic drainage
+lymphatic drainage of
+matures into
+matures_from
+medial to
+member
+member of
+merges with
+merging of
+modification
+modified by
+muscle attachment
+name
+nerve supply
+nerve supply of
+nerve supply type
+Neurolex
+Neurolex ID
+NN abbreviations
+non-English equivalent
+nucleus of origin of
+nucleus of termination of
+orientation
+origin of
+other Latin equivalents
+outdated meaning
+output to
+part
+part of
+part type
+partition
+percentage
+physical state
+PI-RADS v1 16 ID
+PI-RADS v1 27 ID
+PI-RADS v2 ID
+polarity
+posterior to
+posteroinferior to
+posterolateral to
+posteromedial to
+posterosuperior to
+preferred name
+primary author and curator
+primary segmental supply
+primary segmental supply of
+projects from
+projects to
+proximal to
+RadLex ID
+rank of tissue
+receives attachment from
+receives drainage from
+receives input from
+receives projection
+reference
+regional part
+regional part of
+related developmental entity
+related object
+related part
+right lateral to
+right medial to
+RO ID
+secondary segmental supply
+secondary segmental supply of
+segmental composition
+segmental composition of
+segmental contribution from
+segmental contribution to
+segmental innervation
+segmental supply
+segmental supply of
+sends output to
+sensory nerve supply
+slot synonym
+species
+state
+state of determination
+superior to
+superior-inferior position
+superolateral to
+superomedial to
+surrounded by
+surrounds
+synonym
+TA ID
+Talairach
+Talairach ID
+technical support
+term status
+transforms from
+transforms into
+tributary
+tributary  continuity
+tributary of
+UMLS ID
+union
+unites with
+venous drainage
+venous drainage of
+view
