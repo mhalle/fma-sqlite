@@ -105,7 +105,6 @@ def writedb(dbfile, headers, rows):
         foreign key(id) references fma(id))''')
     cur.execute('''create table if not exists definitions
         (id integer NOT NULL,
-        name text,
         definition text,
         lang text)''')
     cur.execute("""create table if not exists fma_dk_freesurfer
@@ -154,9 +153,9 @@ def writedb(dbfile, headers, rows):
         #                    values (?,?,?)''', (r[0], synstring, fmaid))
 
         if defs:
-            defstable = [(fmaid, r[0], d.strip()) for d in defs.split(u'|')]
+            defstable = [(fmaid, d.strip()) for d in defs.split(u'|')]
             cur.executemany(u'''insert or ignore into definitions
-                (id, name, definition) values (?,?,?)''', defstable)
+                (id, definition) values (?,?)''', defstable)
 
         if dk_freesurfer:
             fstable = [(fmaid, int(d.strip()))
