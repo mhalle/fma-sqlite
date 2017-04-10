@@ -41,7 +41,8 @@ CREATE TABLE synonyms
 CREATE TABLE definitions
         (id integer NOT NULL,
         definition text,
-        lang text);
+        lang text,
+        foreign key(id) references fma(id));
 CREATE TABLE fma_dk_freesurfer
         (id integer NOT NULL,
         dk_freesurfer integer NOT NULL,

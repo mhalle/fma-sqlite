@@ -106,7 +106,8 @@ def writedb(dbfile, headers, rows):
     cur.execute('''create table if not exists definitions
         (id integer NOT NULL,
         definition text,
-        lang text)''')
+        lang text,
+        foreign key(id) references fma(id))''')
     cur.execute("""create table if not exists fma_dk_freesurfer
         (id integer NOT NULL,
         dk_freesurfer integer NOT NULL,
